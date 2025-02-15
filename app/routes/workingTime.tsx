@@ -14,6 +14,8 @@ import { useGetElementProperty } from "app/hooks/useGetElementProperty"
 import { useUserRecoil, useShiftCreateRecoil } from "app/hooks/useRecoil"
 import type { WorkingTime, Employee } from "app/utils/types"
 
+
+
 /***
  * 勤務時間帯,従業員編集画面
  *
@@ -46,6 +48,7 @@ export default function Index() {
   const { windowDimensions } = useGetElementProperty<HTMLDivElement>()
   const { data: queryData } = useQuery(employeesAndWorkingTimesQuery)
   const { recoilEmployeeWorkingTime, setRecoilEmployeeWorkingTime } = useShiftCreateRecoil()
+  
 
   // シフト作成途中 + RecoilにデータがあればRecoil, なければフェッチしたデータをHookFormのデフォルトにする
   const formatQueryData = { workingTimes: queryData?.workingTime, employees: queryData?.employee }

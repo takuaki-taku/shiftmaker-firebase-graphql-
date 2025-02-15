@@ -28,7 +28,8 @@ export const CustomProvider = ({ children }: { children: JSX.Element }) => {
     return {
       headers: {
         ...headers,
-        Authorization: `Bearer ${idToken}`
+        Authorization: `Bearer ${idToken}`,
+        "x-hasura-admin-secret": env.HASURA_KEY
       }
     }
   })

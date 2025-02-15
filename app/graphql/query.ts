@@ -37,6 +37,15 @@ export const shiftsQuery = gql`
   }
 `
 
+// ユーザーIDを取得するためのクエリ
+export const getUserIdByUidQuery = (uid: string) => gql`
+  query getUserId {
+    user(where: { uid: { _eq: "${uid}" } }) {
+      id
+    }
+  }
+`;
+
 // 選択年月のシフト取得
 export const shiftDateQuery = (year: number, month: number, userId?: string) => gql`
   query shifts {

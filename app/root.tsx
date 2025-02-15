@@ -37,7 +37,6 @@ export async function loader() {
           API_KEY: process.env.API_KEY,
           AUTH_DOMAIN: process.env.AUTH_DOMAIN,
           PROJECT_ID: process.env.PROJECT_ID,
-          STORAGE_BUCKET: process.env.STORAGE_BUCKET,
           MESSAGING_SENDER_ID: process.env.MESSAGING_SENDER_ID,
           APP_ID: process.env.APP_ID,
           HASURA_URL: process.env.HASURA_URL,
@@ -80,7 +79,6 @@ export default function Root() {
     apiKey: env.API_KEY,
     authDomain: env.AUTH_DOMAIN,
     projectId: env.PROJECT_ID,
-    storageBucket: env.STORAGE_BUCKET,
     messagingSenderId: env.MESSAGING_SENDER_ID,
     appId: env.APP_ID
   })
