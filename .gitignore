@@ -1,11 +1,32 @@
-node_modules
+# Node.js
+/node_modules
+/package-lock.json
+/yarn.lock
 
-.cache
-.env
-.vercel
-.output
-
-/build/
+# Remix
 /public/build
-/api/index.js
-/api/index.js.map
+/build
+/api/index.js # または serverBuildPath で指定したパス
+/.cache
+/.remix
+
+# Environment variables
+/.env
+/.env.*
+!.env.example
+
+# VS Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+
+# macOS
+.DS_Store
+
+# その他
+tmp
+temp
+*.log
+*.swp
+*.lock
