@@ -53,14 +53,24 @@ export const useMutationShift = ({ shifts, shiftInfo, employees, workingTimes }:
     shiftEmployees: {
       data: shiftEmployees && [
         ...shiftEmployees.map((v: any) => {
+          console.log("v:");          
           const obj = { ...v }
           delete obj.id
           delete obj.userId
-          let workIds = shifts.find((shift) => shift.employee === v.id)?.workIds?.map((id, i) => id ?? 0)
+          let workIds = shifts.find((shift) => shift.employee === v.id)?.workIds?.map((id, i) => {
+            if (id === null || id === undefined) {
+              return null; // または、エラーが発生しないようなデフォルト値を返す
+            }
+            return id;
+          }) ?? [];
+    
+          // workIds から null を取り除く
+          const filteredWorkIds = workIds.filter(id => id !== null);
+    
           return {
             name: v.name,
-            canWorkingIds: ((array) => `{${array.join(",")}}`)(v.canWorkingIds),
-            workIds: ((array) => `{${array?.join(",")}}`)(workIds)
+            canWorkingIds: v.canWorkingIds,
+            workIds: filteredWorkIds
           }
         })
       ]
@@ -80,6 +90,7 @@ export const useMutationShift = ({ shifts, shiftInfo, employees, workingTimes }:
   let variables: any
 
   if (shiftInfo?.isEdit) {
+
     mutationDocumentNode = updateShift
     variables = {
       shift: { ...shiftVariable, shiftDateId: recoilEditShiftId?.shiftDateId },
@@ -115,6 +126,7 @@ export const useMutationShift = ({ shifts, shiftInfo, employees, workingTimes }:
   })
 
   const mutationShifts = () => {
+    console.log("variables:", JSON.stringify(variables, null, 2))
     mutation({
       variables: variables
     })

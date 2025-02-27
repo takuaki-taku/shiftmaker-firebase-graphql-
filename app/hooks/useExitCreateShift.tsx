@@ -52,14 +52,19 @@ const ModalContent = ({ mutation, setOpen }: Props) => {
             <p className="mr-4">一時保存すると現在の内容のまま作業を再開できます。</p>
             <div className="">
               <Button
-                text="一時保存"
-                onClick={() => {
-                  setOpen && setOpen(false)
-                  mutation()
-                }}
-                color="primary"
-                width="md"
-              />
+                  text="一時保存"
+                  onClick={() => {
+                    setOpen && setOpen(false);
+                    
+                    try {
+                      mutation();
+                    } catch (error) {
+                      console.error("mutation error:", error); // mutation 関数内で発生したエラーを出力
+                    }
+                  }}
+                  color="primary"
+                  width="md"
+                />
             </div>
           </div>
         </>
