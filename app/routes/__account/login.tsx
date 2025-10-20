@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useNavigate } from "@remix-run/react"
 import { Button, Input } from "app/components/common"
 import { Title } from "app/components/Title"
@@ -6,7 +6,6 @@ import { useForm } from "react-hook-form"
 import { BsEyeSlashFill, BsEyeFill } from "react-icons/bs"
 import { FcGoogle } from "react-icons/fc"
 import toast from "react-hot-toast"
-import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth"
 import { useUserRecoil } from "app/hooks/useRecoil"
 import type { SubmitHandler } from "react-hook-form"
 
@@ -21,7 +20,15 @@ export default function Index() {
   const [errorMessage, setErrorMessage] = useState("")
   const [loading, setLoading] = useState(false)
   const { setRecoilUser } = useUserRecoil()
-  const auth = getAuth()
+  const [auth, setAuth] = useState<any>(null)
+  // クライアントでのみAuthを初期化
+  useEffect(() => {
+    if (typeof window === "undefined") return
+    ;(async () => {
+      const { getAuth } = await import("firebase/auth")
+      setAuth(getAuth())
+    })()
+  }, [])
 
   const {
     register,
@@ -30,8 +37,9 @@ export default function Index() {
   } = useForm<SubmitValue>()
 
   // ログイン処理
-  const submitLogin: SubmitHandler<SubmitValue> = ({ email, password }) => {
+  const submitLogin: SubmitHandler<SubmitValue> = async ({ email, password }) => {
     setLoading(true)
+    const { signInWithEmailAndPassword } = await import("firebase/auth")
     signInWithEmailAndPassword(auth, email, password)
       .then(async (res) => {
         setRecoilUser({ uid: res.user.uid, name: res.user.displayName, email: res.user.email, createdAt: res.user.metadata.creationTime })
@@ -53,11 +61,16 @@ export default function Index() {
 
   // Google連携処理
   const connectGoogleAuth = async () => {
+    const { GoogleAuthProvider, signInWithPopup } = await import("firebase/auth")
     const provider = new GoogleAuthProvider()
     signInWithPopup(auth, provider).then(() => {
       toast.success("Googleアカウントでログインしました。")
       navigate("/shift")
     })
+  }
+
+  if (!auth) {
+    return <></>
   }
 
   return (

@@ -75,13 +75,16 @@ const initializeFirebase = (config: any) => {
 
 export default function Root() {
   const { env } = useLoaderData()
-  initializeFirebase({
-    apiKey: env.API_KEY,
-    authDomain: env.AUTH_DOMAIN,
-    projectId: env.PROJECT_ID,
-    messagingSenderId: env.MESSAGING_SENDER_ID,
-    appId: env.APP_ID
-  })
+  // Firebaseの初期化はSSR中には実行しない
+  if (typeof window !== "undefined") {
+    initializeFirebase({
+      apiKey: env.API_KEY,
+      authDomain: env.AUTH_DOMAIN,
+      projectId: env.PROJECT_ID,
+      messagingSenderId: env.MESSAGING_SENDER_ID,
+      appId: env.APP_ID
+    })
+  }
 
   type consoleType = "log" | "debug" | "warn" | "error"
   const consoleKey: consoleType[] = env.ENVIRONMENT === "PRODUCT" ? ["warn", "error", "log", "debug"] : ["debug", "warn", "error"]

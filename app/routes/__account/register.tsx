@@ -2,9 +2,8 @@ import toast from "react-hot-toast"
 import { useNavigate } from "@remix-run/react"
 import { Button, Input } from "app/components/common"
 import { useForm } from "react-hook-form"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { BsEyeSlashFill, BsEyeFill } from "react-icons/bs"
-import { getAuth, createUserWithEmailAndPassword, updateProfile } from "firebase/auth"
 import { Title } from "app/components/Title"
 import type { SubmitHandler } from "react-hook-form"
 
@@ -14,7 +13,14 @@ import type { SubmitHandler } from "react-hook-form"
 
 type SubmitValue = { email: string; password: string; confirm: string; name: string }
 export default function Index() {
-  const auth = getAuth()
+  const [auth, setAuth] = useState<any>(null)
+  useEffect(() => {
+    if (typeof window === "undefined") return
+    ;(async () => {
+      const { getAuth } = await import("firebase/auth")
+      setAuth(getAuth())
+    })()
+  }, [])
   const navigate = useNavigate()
   const [isHiddenPassword, setHiddenPassword] = useState(true)
   const [isHiddenConfirm, setHiddenConfirm] = useState(true)
@@ -30,6 +36,7 @@ export default function Index() {
   // 登録処理
   const submitRegister: SubmitHandler<SubmitValue> = async ({ email, password, name }) => {
     setLoading(true)
+    const { createUserWithEmailAndPassword, updateProfile } = await import("firebase/auth")
     createUserWithEmailAndPassword(auth, email, password)
       .then((res) => {
         updateProfile(res.user, { displayName: name })
@@ -42,6 +49,10 @@ export default function Index() {
         )
         setLoading(false)
       })
+  }
+
+  if (!auth) {
+    return <></>
   }
 
   return (
