@@ -3,7 +3,6 @@ import { useUserRecoil, useLoadRecoil } from "app/hooks/useRecoil"
 import { useLogout } from "app/hooks/useLogout"
 import { Modal, Button, CheckBox } from "app/components/common"
 import { useState, useEffect } from "react"
-import { getAuth, deleteUser } from "firebase/auth"
 import { useNavigate } from "@remix-run/react"
 import { toast } from "react-hot-toast"
 import { useMutation } from "@apollo/client"
@@ -14,7 +13,14 @@ import { deleteUser as mutation } from "app/graphql/mutation"
  */
 
 const ModalContent = ({ setOpen }: { setOpen: React.Dispatch<React.SetStateAction<boolean>> }) => {
-  const auth = getAuth()
+  const [auth, setAuth] = useState<any>(null)
+  useEffect(() => {
+    if (typeof window === "undefined") return
+    ;(async () => {
+      const { getAuth } = await import("firebase/auth")
+      setAuth(getAuth())
+    })()
+  }, [])
   const { recoilUser, setRecoilUser } = useUserRecoil()
   const [checkedExit, setCheck] = useState(false)
   const navigate = useNavigate()
@@ -24,6 +30,7 @@ const ModalContent = ({ setOpen }: { setOpen: React.Dispatch<React.SetStateActio
   const handleDeleteUser = async () => {
     setOpen(false)
     setRecoilLoad(true)
+    const { deleteUser } = await import("firebase/auth")
     await deleteUser(auth.currentUser!)
       .then(async () => {
         deleteHasuraUser({ variables: { uuid: recoilUser?.uid } })
@@ -59,6 +66,7 @@ const ModalContent = ({ setOpen }: { setOpen: React.Dispatch<React.SetStateActio
 
 export default function Index() {
   const { recoilUser } = useUserRecoil()
+  console.log("recoilUser:", recoilUser); // ここにconsole.logを追加
   const { ConfirmModal, openLogoutModal } = useLogout()
   const [isOpen, setOpen] = useState(false)
 

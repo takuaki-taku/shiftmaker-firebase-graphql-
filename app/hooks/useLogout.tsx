@@ -1,5 +1,4 @@
 import toast from "react-hot-toast"
-import { signOut, getAuth } from "firebase/auth"
 import { useUserRecoil, useShiftEditRecoil, useShiftCreateRecoil } from "app/hooks/useRecoil"
 import { useNavigate } from "@remix-run/react"
 import { Modal, Button } from "app/components/common"
@@ -13,15 +12,19 @@ export const useLogout = () => {
   const { setRecoilEditUpdateId } = useShiftEditRecoil()
   const { resetCreate } = useShiftCreateRecoil()
   const { setRecoilUser } = useUserRecoil()
-  const auth = getAuth()
+  let auth: any = null
   const navigate = useNavigate()
 
-  const logout = () => {
+  const logout = async () => {
+    if (typeof window !== "undefined" && !auth) {
+      const { getAuth, signOut } = await import("firebase/auth")
+      auth = getAuth()
+      signOut(auth)
+    }
     setRecoilEditUpdateId(undefined)
     setRecoilUser(undefined)
     resetCreate()
     toast.success("ログアウトしました。")
-    signOut(auth)
     navigate("/login")
   }
 
